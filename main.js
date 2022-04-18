@@ -24,15 +24,16 @@ class Player {
 
 const form = document.querySelector("form");
 const player = document.getElementById("name");
+const nombre = document.getElementById("player");
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   const player1 = new Player(player.value, 0, "playing");
-  
-});///Aquí me surge un problema y es que player 1 solo está definido en el interior de la función pero no sé como 
-///trasladar el valor para usarlo fuera. Para seguir probando el resto de funcionalidades creo manuelment un jugador fuera.
+  nombre.textContent = player.value;
+}); ///Aquí me surge un problema y es que player 1 solo está definido en el interior de la función pero no sé como
+///trasladar el valor para usarlo fuera. Para seguir probando el resto de funcionalidades creo manualmente un jugador fuera.
 
-let player1=new Player("Pepe",0,"Playing");
+let player1 = new Player("Pepe", 0, "Playing");
 /*Creo un array con todas las cartas.En principio pensé en crear un constructor pero al ser siempre la misma no creo que sea necesario*/
 let numbers = [1, 2, 3, 4, 5, 6, 7, 10, 11, 12];
 let palos = ["oros", "bastos", "espadas", "copas"];
@@ -47,11 +48,15 @@ for (let i = 0; i < palos.length; i++) {
 /*let a = get_carta(baraja);
 console.log(a.carta);
 console.log(a.nuevo_mazo);*/
-
+let banc = new Player("banca", 0, "playing");
 const lista_carta = document.getElementById("carta");
 const new_card = document.getElementById("p1");
 const puntuacion = document.getElementById("punt");
-const estado=document.getElementById("state")
+const estado = document.getElementById("state");
+const planto = document.getElementById("plantarse");
+const banca = document.getElementById("banca");
+const puntu_banca = document.getElementById("punt_banca");
+const winner = document.getElementById("ganador");
 ///console.log(lista_carta);
 
 lista_carta.addEventListener("click", (event) => {
@@ -65,13 +70,36 @@ lista_carta.addEventListener("click", (event) => {
   new_card.appendChild(li);
   baraja = nc.nuevo_mazo;
   ///Cálculo de la nueva puntuación
-  console.log(player1.puntos);
-  console.log(numero);
+  ///console.log(player1.puntos);
+  ///console.log(numero);
 
   let nueva_punt = calc_jugada(player1.puntos, numero);
-  estado.textContent=nueva_punt.estado
+  estado.textContent = nueva_punt.estado;
 
   ///puntuacion.textContent = `Puntuación:${nueva_punt}`;
-  player1.puntos = nueva_punt.nueva_jugada
-  puntuacion.textContent=player1.puntos
+  player1.puntos = nueva_punt.nueva_jugada;
+  puntuacion.textContent = player1.puntos;
+  ///Si jugador se planta pasa a jugar la banca hasta que se pasa o su jugada es mejor que la del jugador
+});
+planto.addEventListener("click", (event) => {
+  let estadob = "playing";
+  while (estadob === "playing") {
+    console.log(estadob);
+    let ncb = get_carta(baraja);
+    let numerob = ncb.carta.numero;
+    let palob = ncb.carta.palo;
+    const lib = document.createElement("li");
+    lib.textContent = numerob + " " + palob;
+    banca.appendChild(lib);
+    let punt_banca = calc_jugada(banc.puntos, numerob);
+    banc.puntos = punt_banca.nueva_jugada;
+    estadob = punt_banca.estado;
+    puntu_banca.textContent = banc.puntos;
+    console.log(banc.puntos);
+  }
+  if (banc.puntos <= 7.5 && banc.puntos > player1.puntos) {
+    winner.textContent = "BANCA";
+  } else {
+    winner.textContent = "Player1";
+  }
 });
